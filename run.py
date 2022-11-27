@@ -54,33 +54,13 @@ def validate_data(values):
 
     return True    
 
-def update_sales_worksheet(data):
-    """
-    update sales worksheet, add new row with the list data provided.
-    """    
-    print('Updating sales worksheet...\n')
-    sales_worksheet = SHEET.worksheet('sales')
-    sales_worksheet.append_row(data)
-    print("sales worksheet updated successfully.\n") 
-
-def update_surplus_worksheet(data):
-    """
-    update surplus worksheet, add new row with the list data provided.
-    """    
-    print('Updating surplus worksheet...\n')
-    surplus_worksheet = SHEET.worksheet('surplus')
-    surplus_worksheet.append_row(data)
-    print("Surplus worksheet updated successfully.\n")     
-
-# Refactoring 2 functions above into one to avoid repeating
-
 def update_worksheet(data, worksheet):
     """
     Receives a list of integers to be inserted into a worksheet
     Update the relevant worksheet with the data provided.
     """
     print(f'Updating {main} worksheet...\n')
-    worksheet_to_update = SHEET.worksheet('worksheet')
+    worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(data)
     print(f"{worksheet}worksheet updated successfully\n")
 
@@ -119,6 +99,21 @@ def get_last_5_entries_sales():
     
     return columns    
 
+def calculate_stock_data(data):  
+    """
+    Calculate the average stock for each item type, adding 10%
+    """  
+    print(f"Calculating stock data...\n")
+
+    new_stock_data = []
+    for column in data:
+        int_column = [int(num) for num in column]
+        average = sum(int_column) / len(int_column)
+        stock_num = average * 1.1
+        new_stock_data.append(round(stock_num))
+    
+    return new_stock_data  
+
 def main():
     """
     Run all program functions
@@ -128,7 +123,9 @@ def main():
     update_worksheet(sales_data, 'sales')
     new_surplus_data = calculate_surplus_data(sales_data)
     update_worksheet(new_surplus_data, 'surplus')
+    sales_columns = get_last_5_entries_sales()
+    stock_data = calculate_stock_data(sales_columns)
+    update_worksheet(stock_data, "stock")
 
 print("Welcome to Love Sandwiches Data Automation")
-# main()
-sales_columns = get_last_5_entries_sales()
+main()
